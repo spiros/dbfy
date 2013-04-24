@@ -467,7 +467,7 @@ sub extract_table_name_from_file_name{
 =cut
 
  sub extract_column_headers {
-    my $self = shift;
+    my $self      = shift;
     my $first_row = shift;
 
     return undef unless ( defined $first_row );
@@ -496,6 +496,8 @@ sub extract_table_name_from_file_name{
 
 Normalizes a string by: replacing whitespace with
 underscores and lowecasing it.
+
+This method returns undef on error.
 
 =cut
 

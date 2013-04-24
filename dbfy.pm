@@ -462,7 +462,12 @@ sub extract_table_name_from_file_name{
     return $self->normalize_string( $filename );
 }
 
-=head2 extract_column_headers
+=head2 extract_column_headers( $first_row )
+
+Given a raw file row, returns a reference to 
+an array with the column header names.
+
+This method will return undef on error.
 
 =cut
 

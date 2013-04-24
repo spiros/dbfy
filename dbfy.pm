@@ -83,9 +83,13 @@ sub execute {
 
     my $sth = $self->dbh->prepare( $sql );
 
+    # Execute with supplied bind values
     if ( $ra_bind ){
         return $sth->execute( @$ra_bind );
-    } else {
+    } 
+
+    # Execute with no bind values
+    else {
         return $sth->execute( );
     }
 }
@@ -151,6 +155,14 @@ sub process_file {
     ## Read the top 10% of rows and store the values
 
     my $rh_top_ten_pct = { };
+
+    # Init as empty as some columns might
+    # be 100% missing. 
+    
+    foreach my $c (@a_columns){
+        $rh_top_ten_pct->{ $c } = { };
+    }
+
     my $tenpct = int( $total_rows * 0.1 ) || 1;
 
     foreach my $n ( 1..$tenpct ) {
@@ -170,9 +182,8 @@ sub process_file {
                 $rh_top_ten_pct->{ $label }->{ $value }++;
             }
         } 
-
         else {
-            #TODO: parsing error.
+            warn "Unable to parse row: $n";
         }    
     }
 
@@ -343,6 +354,7 @@ sub guess_column_data_types {
         my $data_type = $self->guess_data_type( \@values );
         $rh_column_data_types->{$col} = $data_type;
     }
+
     return $rh_column_data_types;
 }
 

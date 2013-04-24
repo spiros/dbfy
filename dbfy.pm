@@ -492,7 +492,10 @@ sub extract_table_name_from_file_name{
     return $ra_columns;
 }
 
-=head2 normalize_string
+=head2 normalize_string( $string )
+
+Normalizes a string by: replacing whitespace with
+underscores and lowecasing it.
 
 =cut
 

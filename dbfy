@@ -1,0 +1,87 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use dbfy;
+use Data::Dumper;
+use Getopt::Long;
+
+my $rh_options = { };
+my $ra_files   = [ ];
+
+GetOptions(
+    $rh_options,
+    'output:s',
+    'input:s' => $ra_files,
+    'help'
+);
+
+if ( $rh_options->{'help'} ){
+    help_and_exit();
+}
+
+##
+## Process command line arguments
+
+my $rh_files_to_process = { };
+parse_options( $rh_options );
+
+## Init module
+my $rh_params = { 
+    'output' => $rh_options->{'output'},
+    'input'  => $ra_files,
+};
+
+my $dbfy = dbfy->new( $rh_params );
+
+$dbfy->start();
+
+#############################################
+#############################################
+
+sub parse_options {
+    my $rh_options = shift;
+
+    foreach my $file ( @$ra_files ){
+        unless ( -e $file && -r $file ){
+            die "Unable to read: $file";
+        }
+    }
+
+    # keep unique references to files
+    foreach my $file ( @$ra_files ){
+        $rh_files_to_process->{ $file } = 1;
+    }
+
+    # make sure output file is defined
+    if ( ! $rh_options->{'output'} ){
+        die "Specify output file using --output.";
+    }
+
+    # make sure output file does not exist already
+    if ( -e $rh_options->{'output'} ){
+        die "Output file exists already.";
+    }
+
+}
+
+sub help_and_exit {
+    print <<"END"
+
+    $0 : Turn a collection of CSV files into a functional SQLite database
+    
+    Arguments:
+
+    --output : name of the SQLite file to be created (must not exist)
+    --input  : name of CSV input file
+    --help   : print this help message and exit
+
+END
+;
+
+exit(0);
+
+}
+
+1;
